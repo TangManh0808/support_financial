@@ -6,6 +6,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 const userRoutes = require("./routes/user.routes");
 const companyRoutes = require("./routes/company.routes");
+const transaction_categoriesRoutes = require("./routes/transaction_categories.routes");
+const transactionsRoutes = require("./routes/transaction.routes");
 
 const PORT = process.env.PORT;
 
@@ -20,6 +22,8 @@ server.use(express.static("public"));
 // routes
 server.use("/users", userRoutes);
 server.use("/companies", companyRoutes);
+server.use("/transaction_categories", transaction_categoriesRoutes);
+server.use("/transactions", transactionsRoutes);
 
 //
 server.listen(PORT, function (req, res) {
