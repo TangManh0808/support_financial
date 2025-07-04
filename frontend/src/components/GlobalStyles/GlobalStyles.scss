@@ -1,0 +1,19 @@
+@import "normalize.css";
+@import url("https://use.typekit.net/xut4tep.css");
+
+:root {
+  --primary: #fe2c55;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  font-size: large;
+}
+body {
+  font-family: "montserrat", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.6rem;
+  lighting-color: #fe2c55;
+}
