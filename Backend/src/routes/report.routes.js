@@ -1,12 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const reportsController = require("..//controllers//report.controller");
+const { authenticate, authorize } = require("../middleware/auth.middleware");
 
-router.get("/", reportsController.getAll);
+router.get(
+  "/",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  reportsController.getAll
+);
 
-router.get("/:id", reportsController.getOne);
+router.get(
+  "/:id",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  reportsController.getOne
+);
 
-router.post("/", reportsController.createOne);
+router.post(
+  "/",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  reportsController.createOne
+);
 
 router.put("/:id", reportsController.updateOne);
 

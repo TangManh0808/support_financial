@@ -1,15 +1,41 @@
 const express = require("express");
 const router = express.Router();
 const transactionController = require("../controllers/transaction.controller");
+const { authenticate, authorize } = require("../middleware/auth.middleware");
 
-router.get("/", transactionController.getAll);
+router.get(
+  "/",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  transactionController.getAll
+);
 
-router.get("/:id", transactionController.getOne);
+router.get(
+  "/:id",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  transactionController.getOne
+);
 
-router.post("/", transactionController.createOne);
+router.post(
+  "/",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  transactionController.createOne
+);
 
-router.put("/:id", transactionController.updateOne);
+router.put(
+  "/:id",
+  authenticate,
+  authorize(["admin", "owner", "accountant"]),
+  transactionController.updateOne
+);
 
-router.delete("/:id", transactionController.deleteOne);
+router.delete(
+  "/:id",
+  authenticate,
+  authorize(["admin", "owner"]),
+  transactionController.deleteOne
+);
 
 module.exports = router;

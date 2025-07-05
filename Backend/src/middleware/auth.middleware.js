@@ -1,33 +1,39 @@
 const jwt = require("jsonwebtoken");
 
-module.exports.authenticate = function (req, res, next) {
-  if (!req.headers.authorization) {
-    return res.status(401).json({
-      message: "Unauthorized",
-    });
-  } else {
-    let token = req.headers.authorization.split(" ")[1];
-    try {
-      let decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      req.user = decoded; // gán thông tin người dùng vào req.user
-      // đây là một token hợp lệ tức là người dùng đã đăng nhập thành công
-      console.log(decoded);
-      next();
-    } catch (error) {
-      res.json(error);
-    }
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+
+// Middleware xác thực token và đính kèm user
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Bạn chưa đăng nhập" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded; // đính kèm thông tin user
+    next();
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ message: "Token không hợp lệ hoặc đã hết hạn" });
   }
 };
-module.exports.authorize = function (roles) {
-  return function (req, res, next) {
-    console.log(req.user);
-    console.log(roles);
-    if (roles.includes(req.user.roles_user)) {
-      next();
-    } else {
-      return res.status(403).json({
-        message: "Forbidden",
-      });
+
+// Middleware phân quyền theo role
+const authorize = (allowedRoles = []) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Bạn không có quyền truy cập" });
     }
+    next();
   };
+};
+
+module.exports = {
+  authenticate,
+  authorize,
 };
