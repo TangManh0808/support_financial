@@ -10,7 +10,7 @@ const transaction_categoriesRoutes = require("./routes/transaction_categories.ro
 const transactionsRoutes = require("./routes/transaction.routes");
 const financial_inputRoutes = require("./routes/financial_input.routes");
 const reportsRoutes = require("./routes/report.routes");
-
+const authRoutes = require("./routes/auth.routes");
 const PORT = process.env.PORT;
 
 // import routes
@@ -28,6 +28,7 @@ server.use("/transaction_categories", transaction_categoriesRoutes);
 server.use("/transactions", transactionsRoutes);
 server.use("/financial_inputs", financial_inputRoutes);
 server.use("/reports", reportsRoutes);
+server.use("/auth", authRoutes);
 
 //
 server.listen(PORT, function (req, res) {
