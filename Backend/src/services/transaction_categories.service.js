@@ -1,9 +1,10 @@
 const db = require("../config/knex");
+
 module.exports.getAll = async function () {
   return await db("transaction_categories").select("*");
 };
 module.exports.getOne = async function (id) {
-  return await db("transaction_categories").where("id", +id);
+  return await db("transaction_categories").where("id", +id).first();
 };
 
 module.exports.createOne = async function (company_id, name, type) {

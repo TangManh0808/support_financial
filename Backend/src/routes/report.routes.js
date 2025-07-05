@@ -24,8 +24,18 @@ router.post(
   reportsController.createOne
 );
 
-router.put("/:id", reportsController.updateOne);
+router.put(
+  "/:id",
+  authenticate,
+  authorize(["admin", "owner"]),
+  reportsController.updateOne
+);
 
-router.delete("/:id", reportsController.deleteOne);
+router.delete(
+  "/:id",
+  authenticate,
+  authorize(["admin", "owner"]),
+  reportsController.deleteOne
+);
 
 module.exports = router;

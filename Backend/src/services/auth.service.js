@@ -35,7 +35,12 @@ module.exports.login = async ({ email, password }) => {
   }
 
   const token = jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      company_id: user.company_id,
+    },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
   );

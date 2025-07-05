@@ -3,7 +3,7 @@ module.exports.getAll = async function () {
   return await db("companies").select("*");
 };
 module.exports.getOne = async function (id) {
-  return await db("companies").where("id", +id);
+  return await db("companies").where("id", +id).first();
 };
 
 module.exports.createOne = async function (
