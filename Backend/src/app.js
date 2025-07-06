@@ -1,7 +1,9 @@
+// const express = require("express");
 const express = require("express");
 const server = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const userRoutes = require("./routes/user.routes");
@@ -20,6 +22,7 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(morgan("dev"));
 server.use(express.static("public"));
+server.use(cors({ origin: "http://localhost:3001", credentials: true }));
 
 // routes
 server.use("/users", userRoutes);

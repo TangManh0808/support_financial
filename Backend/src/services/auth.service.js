@@ -25,6 +25,7 @@ module.exports.register = async ({ name, email, password }) => {
 
 module.exports.login = async ({ email, password }) => {
   const user = await db("users").where({ email }).first();
+  console.log("Tìm thấy user:", user);
   if (!user) {
     throw new Error("Email hoặc mật khẩu không đúng");
   }
