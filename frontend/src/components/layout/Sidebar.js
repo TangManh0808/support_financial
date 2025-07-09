@@ -11,7 +11,7 @@ const Sidebar = () => {
       {/* Menu */}
       <nav className="space-y-2">
         <NavLink
-          to="/dashboard/owner"
+          to="/dashboard/"
           className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
         >
           <BarChart2 size={18} /> Dashboard
