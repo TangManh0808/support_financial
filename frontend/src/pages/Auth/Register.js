@@ -91,7 +91,7 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+            className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition"
           >
             Sign up
           </button>
@@ -110,7 +110,8 @@ const Register = () => {
         <img
           src="http://localhost:3001/anhlogin.jpg"
           alt="Illustration"
-          className="w-full h-full object-contain"
+          // className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
         />
       </div>
     </div>

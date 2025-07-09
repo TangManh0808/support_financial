@@ -14,6 +14,7 @@ const financial_inputRoutes = require("./routes/financial_input.routes");
 const reportsRoutes = require("./routes/report.routes");
 const authRoutes = require("./routes/auth.routes");
 const PORT = process.env.PORT;
+const ownerDashboardRoutes = require("./routes/dashboard/owner/ownerOverview.routes");
 
 // import routes
 
@@ -32,6 +33,8 @@ server.use("/transactions", transactionsRoutes);
 server.use("/financial_inputs", financial_inputRoutes);
 server.use("/reports", reportsRoutes);
 server.use("/auth", authRoutes);
+server.use("/dashboard/owner", ownerDashboardRoutes);
+
 
 //
 server.listen(PORT, function (req, res) {

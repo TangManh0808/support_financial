@@ -1,20 +1,31 @@
-// import { useState } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginAPI } from "../../services/authService";
 import { useAuth } from "../../hooks/useAuth";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState({});
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError({ ...error, [e.target.name]: "" }); // clear error khi đang nhập
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.email) newErrors.email = "Vui lòng nhập email";
+    if (!form.password) newErrors.password = "Vui lòng nhập mật khẩu";
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     try {
       const res = await loginAPI(form);
       login({ user: res.user, token: res.token });
@@ -55,8 +66,10 @@ const Login = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
-              autoComplete="off"
             />
+            {error.email && (
+              <p className="text-red-500 text-sm mt-1">{error.email}</p>
+            )}
           </div>
 
           <div>
@@ -69,8 +82,10 @@ const Login = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
-              autoComplete="off"
             />
+            {error.password && (
+              <p className="text-red-500 text-sm mt-1">{error.password}</p>
+            )}
           </div>
 
           <div className="flex justify-between items-center text-sm">

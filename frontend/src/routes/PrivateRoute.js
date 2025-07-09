@@ -1,15 +1,17 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, role }) => {
   const { user } = useAuth();
 
-  // Nếu chưa đăng nhập thì chuyển về login
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Nếu đã đăng nhập thì cho phép truy cập
+  if (role && user.role !== role) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
   return children;
 };
 
