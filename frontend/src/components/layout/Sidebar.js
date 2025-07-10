@@ -1,51 +1,72 @@
 // components/layout/Sidebar.jsx
 import { NavLink } from "react-router-dom";
-import { BarChart2, FileText, Users, Settings, LogOut } from "lucide-react";
+import {
+  BarChart2,
+  FileText,
+  Activity,
+  FolderDown,
+  Settings,
+  LayoutDashboard,
+} from "lucide-react";
+
+const navItems = [
+  {
+    to: "/dashboard/",
+    icon: <LayoutDashboard size={18} />,
+    label: "Dashboard",
+  },
+  {
+    to: "/transactions",
+    icon: <FileText size={18} />,
+    label: "Giao dịch",
+  },
+  {
+    to: "/reports",
+    icon: <BarChart2 size={18} />,
+    label: "Báo Cáo",
+  },
+  {
+    to: "/analyses",
+    icon: <Activity size={18} />,
+    label: "Phân tích Tài chính",
+  },
+  {
+    to: "/files",
+    icon: <FolderDown size={18} />,
+    label: "Xuất",
+  },
+  {
+    to: "/settings",
+    icon: <Settings size={18} />,
+    label: "Cài đặt hệ thống",
+  },
+];
 
 const Sidebar = () => {
   return (
-    <aside className="w-64 bg-blue-900 text-white min-h-screen p-4 space-y-6">
+    <aside className="w-64 bg-[#0f172a] text-white min-h-screen px-5 py-6 space-y-8">
       {/* Logo */}
-      <div className="text-2xl font-bold">BizManage</div>
+      <div className="text-2xl font-bold tracking-wide">BizManage</div>
 
       {/* Menu */}
-      <nav className="space-y-2">
-        <NavLink
-          to="/dashboard/"
-          className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
-        >
-          <BarChart2 size={18} /> Dashboard
-        </NavLink>
-        <NavLink
-          to="/transactions"
-          className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
-        >
-          <FileText size={18} /> Giao dịch
-        </NavLink>
-        <NavLink
-          to="/reports"
-          className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
-        >
-          <Users size={18} /> Báo Cáo
-        </NavLink>
-        <NavLink
-          to="/analyses"
-          className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
-        >
-          <Users size={18} /> Phân tích Tài chính
-        </NavLink>
-        <NavLink
-          to="/files"
-          className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
-        >
-          <Users size={18} /> Xuất
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className="flex items-center gap-3 p-2 hover:bg-blue-800 rounded"
-        >
-          <Settings size={18} /> Cài đặt hệ thống
-        </NavLink>
+      <nav className="space-y-1">
+        {navItems.map(({ to, icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors 
+              ${
+                isActive
+                  ? "bg-blue-700 text-white font-semibold"
+                  : "hover:bg-blue-800 text-blue-100"
+              }`
+            }
+          >
+            {icon}
+            <span className="text-sm">{label}</span>
+          </NavLink>
+        ))}
       </nav>
     </aside>
   );
