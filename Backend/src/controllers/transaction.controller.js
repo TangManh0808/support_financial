@@ -4,20 +4,38 @@ const checkOwnership = require("../utils/checkOwnership");
 
 module.exports.getAll = async function (req, res) {
   try {
-    let result = await transactionService.getAll();
-    // Chỉ trả về giao dịch thuộc công ty của user (trừ admin)
-    const filtered =
-      req.user.role === "admin"
-        ? result
-        : result.filter((tx) => tx.company_id === req.user.company_id);
+    const { page = 1, limit = 10, month, year, search = "" } = req.query;
+    const company_id = req.user.company_id;
+
+    // Lấy danh sách giao dịch (theo trang)
+    const transactions = await transactionService.getFilteredTransactions({
+      company_id,
+      month,
+      year,
+      search,
+      page: +page,
+      limit: +limit,
+    });
+
+    // Lấy tổng số giao dịch (cho phân trang)
+    const total = await transactionService.getTotalTransactions({
+      company_id,
+      month,
+      year,
+      search,
+    });
+
     res.json({
-      filtered,
-      message: "Get all transactions successfully",
+      data: transactions,
+      total,
+      page: +page,
+      limit: +limit,
+      message: "Lấy danh sách giao dịch thành công",
     });
   } catch (error) {
-    res.json({
-      error,
-      message: "Error occured",
+    res.status(500).json({
+      message: "Lỗi server",
+      error: error.message,
     });
   }
 };

@@ -6,14 +6,14 @@ const { authenticate, authorize } = require("../middleware/auth.middleware");
 router.get(
   "/",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
+  authorize([, "owner", "accountant"]),
   transactionController.getAll
 );
 
 router.get(
   "/:id",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
+  authorize(["owner", "accountant"]),
   transactionController.getOne
 );
 

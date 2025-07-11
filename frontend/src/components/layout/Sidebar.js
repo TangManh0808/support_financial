@@ -14,14 +14,15 @@ const navItems = [
     to: "/dashboard/",
     icon: <LayoutDashboard size={18} />,
     label: "Dashboard",
+    end: true, // ✅ cần truyền xuống NavLink
   },
   {
-    to: "/transactions",
+    to: "/dashboard/transactions",
     icon: <FileText size={18} />,
     label: "Giao dịch",
   },
   {
-    to: "/reports",
+    to: "/dashboard/reports",
     icon: <BarChart2 size={18} />,
     label: "Báo Cáo",
   },
@@ -50,17 +51,18 @@ const Sidebar = () => {
 
       {/* Menu */}
       <nav className="space-y-1">
-        {navItems.map(({ to, icon, label }) => (
+        {navItems.map(({ to, icon, label, end }) => (
           <NavLink
             key={to}
             to={to}
+            end={end} // ✅ Truyền vào đây
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors 
-              ${
-                isActive
-                  ? "bg-blue-700 text-white font-semibold"
-                  : "hover:bg-blue-800 text-blue-100"
-              }`
+      ${
+        isActive
+          ? "bg-blue-700 text-white font-semibold"
+          : "hover:bg-blue-800 text-blue-100"
+      }`
             }
           >
             {icon}

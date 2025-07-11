@@ -13,7 +13,7 @@ const revenueTimeline = require("../../../controllers/dashboard/owner/revenueTim
 const cashflow = require("../../../controllers/dashboard/owner/cashflow.controller");
 const expenseDetail = require("../../../controllers/dashboard/owner/expenseDetail.controller");
 
-// Route chính gọi từng controller
+// Route chức chính gọi các biểu đồ trong Dashboard 
 router.get("/financial", verifyToken, financial.getOverview);
 router.get("/receivable", verifyToken, receivable.getStatus);
 router.get("/payable", verifyToken, payable.getStatus);
@@ -23,5 +23,6 @@ router.get("/revenue-timeline", verifyToken, revenueTimeline.getTimeline);
 // router.get("/best-selling", verifyToken, bestSelling.getTopItems);
 router.get("/cashflow", verifyToken, cashflow.getChartData);
 router.get("/expense-detail", verifyToken, expenseDetail.getBreakdown);
+// Route chức năng Báo Cáo 
 
 module.exports = router;
