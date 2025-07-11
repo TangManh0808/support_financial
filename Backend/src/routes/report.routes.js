@@ -2,39 +2,43 @@ const express = require("express");
 const router = express.Router();
 const reportsController = require("..//controllers//report.controller");
 const { authenticate, authorize } = require("../middleware/auth.middleware");
+const balanceSheet = require("../controllers/dashboard/owner/balanceSheet.controller");
+const incomeStatement = require("../controllers/dashboard/owner/incomeStatement.controller");
 
+// 📊 Bảng cân đối kế toán
 router.get(
-  "/",
+  "/balance-sheet",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
-  reportsController.getAll
+  authorize(["owner", "accountant"]),
+  balanceSheet.getBalanceSheet
 );
 
+// 📈 Báo cáo kết quả kinh doanh
 router.get(
-  "/:id",
+  "/income-statement",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
-  reportsController.getOne
+  authorize(["owner", "accountant"]),
+  incomeStatement.getIncomeStatement
 );
 
 router.post(
   "/",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
+  authorize(["accountant"]),
   reportsController.createOne
 );
 
 router.put(
   "/:id",
   authenticate,
-  authorize(["admin", "owner"]),
+  authorize(["accountant"]),
   reportsController.updateOne
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorize(["admin", "owner"]),
+  authorize(["accountant"]),
   reportsController.deleteOne
 );
 

@@ -7,6 +7,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import OwnerLayout from "~/layouts/OwnerLayout";
 import GlobalStyles from "./components/GlobalStyles";
 import TransactionPage from "./pages/Dashboard/owner/transactions/TransactionPage";
+import ReportsPage from "./pages/Dashboard/owner/reports/ReportsPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             {/* 🔥 Route con để hiển thị trong <Outlet /> */}
             <Route index element={<OwnerDashboard />} />
             <Route path="transactions" element={<TransactionPage />} />
+            <Route path="reports" element={<ReportsPage />} />
           </Route>
 
           {/* 404 page */}

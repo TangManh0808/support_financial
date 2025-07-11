@@ -18,7 +18,7 @@ const OwnerLayout = () => {
         </div>
 
         {/* Nội dung chính có padding top để không che header */}
-        <main className="mt-[72px] p-4 bg-gray-100 min-h-screen">
+        <main className="mt-[100px] p-4 bg-gray-100 min-h-screen">
           <Outlet />
         </main>
       </div>
