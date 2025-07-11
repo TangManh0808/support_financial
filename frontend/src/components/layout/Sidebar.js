@@ -27,17 +27,17 @@ const navItems = [
     label: "Báo Cáo",
   },
   {
-    to: "/analyses",
+    to: "/dashboard/analyses",
     icon: <Activity size={18} />,
     label: "Phân tích Tài chính",
   },
   {
-    to: "/files",
+    to: "/dashboard/files",
     icon: <FolderDown size={18} />,
     label: "Xuất",
   },
   {
-    to: "/settings",
+    to: "/dashboard/settings",
     icon: <Settings size={18} />,
     label: "Cài đặt hệ thống",
   },
