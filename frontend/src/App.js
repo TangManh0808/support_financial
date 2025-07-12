@@ -9,6 +9,7 @@ import GlobalStyles from "./components/GlobalStyles";
 import TransactionPage from "./pages/Dashboard/owner/transactions/TransactionPage";
 import ReportsPage from "./pages/Dashboard/owner/reports/ReportsPage";
 import AnalysesPage from "./pages/Dashboard/owner/analyses/AnalysesPage";
+import SettingsPage from "./pages/Dashboard/owner/settings/SettingsPage";
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
             <Route path="transactions" element={<TransactionPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="analyses" element={<AnalysesPage />} />
-            {/* <Route path="settings" element={<SettingsPage />} /> */}
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
 
           {/* 404 page */}
