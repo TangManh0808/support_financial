@@ -48,7 +48,7 @@ const FinancialOverview = () => {
   const yearOptions = [2023, 2024, 2025];
 
   return (
-    <Card className="col-span-4 bg-orange-600 text-black p-6">
+    <Card className="col-span-4 bg-orange-600 p-6">
       <div className="flex justify-between items-start w-full">
         {/* ✅ Tiêu đề + icon */}
         <div className="text-lg text-white font-bold flex items-center gap-2">
