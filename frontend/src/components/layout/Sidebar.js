@@ -13,7 +13,7 @@ const navItems = [
   {
     to: "/dashboard/",
     icon: <LayoutDashboard size={18} />,
-    label: "Dashboard",
+    label: "Tổng Quan",
     end: true, // ✅ cần truyền xuống NavLink
   },
   {
@@ -32,7 +32,7 @@ const navItems = [
     label: "Phân tích Tài chính",
   },
   {
-    to: "/dashboard/files",
+    to: "/dashboard/exports",
     icon: <FolderDown size={18} />,
     label: "Xuất",
   },

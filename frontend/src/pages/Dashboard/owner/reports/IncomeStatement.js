@@ -3,6 +3,11 @@ import { formatCurrency } from "~/utils/format";
 
 const IncomeStatement = ({ data }) => {
   if (!data) return null;
+  // console.log(data.data);
+
+  // 👇 Lấy dữ liệu từ cấu trúc lồng nhau
+  const report = data || {};
+  console.log(report);
 
   const {
     revenue = 0,
@@ -11,11 +16,11 @@ const IncomeStatement = ({ data }) => {
     sellingExpenses = 0,
     adminExpenses = 0,
     depreciation = 0,
-    taxes = 0,
-    profitBeforeTax = 0,
+    leasingCosts = 0,
+    operatingProfit = 0,
     corporateTax = 0,
     netProfit = 0,
-  } = data;
+  } = report;
 
   return (
     <div className="bg-white shadow-lg p-6 rounded-2xl border border-gray-200 text-[15px] space-y-4 transition hover:shadow-xl">
@@ -23,15 +28,36 @@ const IncomeStatement = ({ data }) => {
         📈 <span>Báo Cáo Kết Quả Kinh Doanh</span>
       </h2>
       <ul className="space-y-2 text-gray-700 ml-2">
-        <li>• Doanh thu: <strong className="text-black">{formatCurrency(revenue)}</strong></li>
-        <li>• Giá vốn hàng bán: <strong>{formatCurrency(costOfGoodsSold)}</strong></li>
-        <li>• Lợi nhuận gộp: <strong>{formatCurrency(grossProfit)}</strong></li>
-        <li>• Chi phí bán hàng: <strong>{formatCurrency(sellingExpenses)}</strong></li>
-        <li>• Chi phí quản lý doanh nghiệp: <strong>{formatCurrency(adminExpenses)}</strong></li>
-        <li>• Khấu hao: <strong>{formatCurrency(depreciation)}</strong></li>
-        <li>• Chi phí thuế khác: <strong>{formatCurrency(taxes)}</strong></li>
-        <li>• Lợi nhuận trước thuế: <strong>{formatCurrency(profitBeforeTax)}</strong></li>
-        <li>• Thuế TNDN: <strong>{formatCurrency(corporateTax)}</strong></li>
+        <li>
+          • Doanh thu:{" "}
+          <strong className="text-black">{formatCurrency(revenue)}</strong>
+        </li>
+        <li>
+          • Giá vốn hàng bán: <strong>{formatCurrency(costOfGoodsSold)}</strong>
+        </li>
+        <li>
+          • Lợi nhuận gộp: <strong>{formatCurrency(grossProfit)}</strong>
+        </li>
+        <li>
+          • Chi phí bán hàng: <strong>{formatCurrency(sellingExpenses)}</strong>
+        </li>
+        <li>
+          • Chi phí quản lý doanh nghiệp:{" "}
+          <strong>{formatCurrency(adminExpenses)}</strong>
+        </li>
+        <li>
+          • Khấu hao: <strong>{formatCurrency(depreciation)}</strong>
+        </li>
+        <li>
+          • Chi phí thuê ngoài: <strong>{formatCurrency(leasingCosts)}</strong>
+        </li>
+        <li>
+          • Lợi nhuận trước thuế:{" "}
+          <strong>{formatCurrency(operatingProfit)}</strong>
+        </li>
+        <li>
+          • Thuế TNDN: <strong>{formatCurrency(corporateTax)}</strong>
+        </li>
         <li className="text-black font-bold text-base mt-2">
           🔸 Lợi nhuận sau thuế:{" "}
           <span className={netProfit >= 0 ? "text-green-600" : "text-red-600"}>

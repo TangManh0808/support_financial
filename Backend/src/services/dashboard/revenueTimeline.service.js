@@ -31,7 +31,7 @@ exports.getTimelineData = async ({
     .select(dateSelect)
     .sum({ totalRevenue: "amount" })
     .where("type", "revenue")
-    .andWhere("company_id", company_id) // ✅ Phân quyền theo công ty
+    .andWhere("company_id", company_id) 
     .groupBy(groupBy)
     .orderBy(groupBy);
 

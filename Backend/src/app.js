@@ -18,11 +18,15 @@ const ownerDashboardRoutes = require("./routes/dashboard/owner/ownerOverview.rou
 const analysesRoutes = require("./routes/dashboard/owner/analyses.routes");
 const settingsRoutes = require("./routes/dashboard/owner/settings.routes");
 const fileRoutes = require("./routes/files.route");
+const exportRoutes = require("./routes/dashboard/owner/export.routes");
 const path = require("path");
 // import routes
 
 //
-server.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
+server.use(
+  "/uploads",
+  express.static(path.join(__dirname, "public", "uploads"))
+);
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(morgan("dev"));
@@ -41,6 +45,7 @@ server.use("/dashboard/owner", ownerDashboardRoutes);
 server.use("/dashboard/owner", analysesRoutes);
 server.use("/dashboard/owner/settings", settingsRoutes);
 server.use("/dashboard/owner/settings/files", fileRoutes);
+server.use("/dashboard/owner", exportRoutes);
 
 //
 server.listen(PORT, function (req, res) {

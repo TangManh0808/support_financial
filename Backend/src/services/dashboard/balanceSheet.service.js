@@ -4,8 +4,8 @@ const getBalanceSheet = async ({ company_id, month, year }) => {
   const rows = await db("financial_inputs")
     .select("field", db.raw("SUM(value) as total"))
     .where({ company_id })
-    .andWhereRaw("MONTH(created_at) = ?", [month])
-    .andWhereRaw("YEAR(created_at) = ?", [year])
+    .andWhere("month", month)
+    .andWhere("year", year)
     .groupBy("field");
 
   const result = Object.fromEntries(
@@ -30,9 +30,9 @@ const getBalanceSheet = async ({ company_id, month, year }) => {
       longTermDebt: result.long_term_debt || 0,
     },
     equity: {
-      capital: result.owner_capital || 0,
+      capital: result.capital_contribution || 0,
       retainedEarnings: result.retained_earnings || 0,
-      developmentFunds: result.reserve_fund || 0,
+      developmentFunds: result.reserves || 0,
     },
   };
 };

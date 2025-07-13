@@ -15,7 +15,8 @@ const useReports = ({ month, year }) => {
         ]);
         // console.log(balanceRes.data.data);
         setBalanceSheet(balanceRes.data);
-        setIncomeStatement(incomeRes.data.data);
+        setIncomeStatement(incomeRes.data.data.data);
+        // console.log(incomeStatement);
       } catch (error) {
         console.error("Lỗi lấy dữ liệu báo cáo:", error);
       }

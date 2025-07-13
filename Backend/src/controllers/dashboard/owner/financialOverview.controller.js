@@ -1,23 +1,28 @@
-const db = require("../../../config/knex"); // Knex instance
+const db = require("../../../config/knex");
 
 exports.getOverview = async (req, res) => {
   const { company_id } = req.user;
   const { month, year } = req.query;
 
-  // console.log(company_id, month, year);
+  if (!company_id || !month || !year) {
+    return res.status(400).json({ message: "Thiếu tham số" });
+  }
 
   try {
-    // 1. Lấy financial_inputs
+    // 1. Lấy các chỉ số từ financial_inputs
     const inputs = await db("financial_inputs")
-      .select("field", "value")
-      .where({ company_id, month, year });
+      .select("field", db.raw("SUM(value) as total"))
+      .where({ company_id })
+      .andWhere("month", month)
+      .andWhere("year", year)
+      .groupBy("field");
 
     const inputMap = {};
     inputs.forEach((row) => {
-      inputMap[row.field] = Number(row.value) || 0;
+      inputMap[row.field] = Number(row.total) || 0;
     });
 
-    // 2. Lấy tổng doanh thu & chi phí
+    // 2. Lấy tổng doanh thu và chi phí từ bảng transactions
     const transactions = await db("transactions")
       .select("type")
       .sum({ total: "amount" })
@@ -28,26 +33,28 @@ exports.getOverview = async (req, res) => {
 
     let revenue = 0;
     let expense = 0;
+
     transactions.forEach((row) => {
       if (row.type === "revenue") revenue = Number(row.total);
       if (row.type === "expense") expense = Number(row.total);
     });
 
+    // 3. Tính các chỉ số cần trả về
     const data = {
       total: (inputMap.cash_on_hand || 0) + (inputMap.bank_balance || 0),
       cash: inputMap.cash_on_hand || 0,
       bank: inputMap.bank_balance || 0,
-      receivable: 100, // ❗ giả sử: sau này sẽ làm rõ (ví dụ tạo thêm bảng công nợ)
-      payable: 50, // ❗ như trên
+      receivable: inputMap.receivables || 0,
+      payable: (inputMap.short_term_debt || 0) + (inputMap.long_term_debt || 0),
       revenue,
       expense,
       profit: revenue - expense,
-      inventory: inputMap.inventory || 0, // ❗ nếu không có trường này thì bỏ
+      inventory: inputMap.inventory || 0,
     };
 
     res.json({ data });
   } catch (error) {
     console.error("Lỗi getOverview:", error);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };

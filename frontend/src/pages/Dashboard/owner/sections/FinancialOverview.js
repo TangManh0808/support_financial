@@ -45,7 +45,7 @@ const FinancialOverview = () => {
       : "0";
 
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-  const yearOptions = [2023, 2024, 2025];
+  const yearOptions = [2023, 2024, 2025, 2026, 2027, 2028];
 
   return (
     <Card className="col-span-4 bg-orange-600 p-6">

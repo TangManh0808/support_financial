@@ -47,7 +47,7 @@ const useRevenueTimeline = (year) => {
   useEffect(() => {
     fetch();
   }, [year]);
-
+  
   return { data, loading, error, refetch: fetch };
 };
 

@@ -1,50 +1,77 @@
 const db = require("../../config/knex");
+const {
+  incomeStatementService,
+} = require("../dashboard/incomeStatement.service");
 
 module.exports = async ({ month, year, company_id }) => {
+  if (!month || !year) {
+    throw new Error("Thiếu tháng hoặc năm khi truy vấn phân tích tài chính");
+  }
+
+  // 1. Gọi incomeStatement để lấy lợi nhuận sau thuế
+  const incomeStatement = await incomeStatementService({
+    company_id,
+    month,
+    year,
+  });
+
+  const netProfit = incomeStatement?.data?.netProfit || 0;
+
+  // 2. Lấy financial_inputs để tính tổng tài sản
   const rows = await db("financial_inputs")
     .select("field", db.raw("SUM(value) as total"))
     .where({ company_id })
-    .andWhereRaw("MONTH(created_at) = ?", [month])
-    .andWhereRaw("YEAR(created_at) = ?", [year])
+    .andWhereRaw("month(created_at) = ?", [month])
+    .andWhereRaw("year(created_at) = ?", [year])
     .groupBy("field");
 
   const map = Object.fromEntries(rows.map((r) => [r.field, Number(r.total)]));
+  // 3. Lấy doanh thu từ bảng transactions
+  const revenueResult = await db("transactions")
+    .where({ company_id, type: "revenue", status: "paid" })
+    .whereRaw("month(date) = ? AND year(date) = ?", [month, year])
+    .sum({ revenue: "amount" })
+    .first();
 
-  const doanhThu = map.revenue || 0;
-  const loiNhuanSauThue = map.net_profit || 0;
-  const tongTaiSan =
+  const revenue = parseFloat(revenueResult.revenue || 0);
+  // 4. Gọi incomeStatement để lấy Giá vốn
+  const costOfGoodsSold = incomeStatement?.data?.costOfGoodsSold || 0;
+  // biên lợi nhuận gộp
+  const grossProfitMargin =
+    revenue !== 0 ? (revenue - costOfGoodsSold) / revenue : 0;
+
+  const totalAssets =
     (map.cash_on_hand || 0) +
     (map.bank_balance || 0) +
-    (map.inventory || 0) +
     (map.receivables || 0) +
+    (map.inventory || 0) +
     (map.fixed_assets || 0) +
     (map.long_term_investments || 0);
-  const vonChuSoHuu =
-    (map.owner_capital || 0) +
+
+  const equity =
+    (map.capital_contribution || 0) +
     (map.retained_earnings || 0) +
-    (map.reserve_fund || 0);
-  const noPhaiTra = (map.short_term_debt || 0) + (map.long_term_debt || 0);
-  const chiPhi =
-    (map.selling_expenses || 0) +
-    (map.admin_expenses || 0) +
-    (map.depreciation || 0) +
-    (map.corporate_tax || 0);
+    (map.reserves || 0);
+  // roe = lợi nhuận sau thuế / vốn chủ sở hữu
+  const roe = equity !== 0 ? netProfit / equity : 0;
+
+  const totalDebt = (map.short_term_debt || 0) + (map.long_term_debt || 0);
+
+  const currentRatio =
+    map.short_term_debt !== 0
+      ? (map.cash_on_hand || 0) +
+        (map.bank_balance || 0) +
+        (map.receivables || 0) / map.short_term_debt
+      : 0;
 
   return {
-    ROA: tongTaiSan !== 0 ? loiNhuanSauThue / tongTaiSan : 0,
-    ROE: vonChuSoHuu !== 0 ? loiNhuanSauThue / vonChuSoHuu : 0,
-    TyLeNo: tongTaiSan !== 0 ? noPhaiTra / tongTaiSan : 0,
-    TyLeThanhToanHienHanh:
-      map.short_term_debt !== 0
-        ? (map.cash_on_hand + map.bank_balance + map.receivables) /
-          map.short_term_debt
-        : 0,
-    VongQuayHangTonKho: map.inventory !== 0 ? doanhThu / map.inventory : 0,
-    VongQuayTaiSan: tongTaiSan !== 0 ? doanhThu / tongTaiSan : 0,
-    BienLoiNhuanRong: doanhThu !== 0 ? loiNhuanSauThue / doanhThu : 0,
-    BienLoiNhuanGop:
-      doanhThu !== 0 && map.cost_of_goods_sold !== undefined
-        ? (doanhThu - map.cost_of_goods_sold) / doanhThu
-        : 0,
+    ROA: totalAssets !== 0 ? netProfit / totalAssets : 0,
+    ROE: roe,
+    TyLeNo: totalAssets !== 0 ? totalDebt / totalAssets : 0,
+    TyLeThanhToanHienHanh: currentRatio,
+    VongQuayHangTonKho: map.inventory !== 0 ? revenue / map.inventory : 0,
+    VongQuayTaiSan: totalAssets !== 0 ? revenue / totalAssets : 0,
+    BienLoiNhuanRong: revenue !== 0 ? netProfit / revenue : 0,
+    BienLoiNhuanGop: grossProfitMargin,
   };
 };
