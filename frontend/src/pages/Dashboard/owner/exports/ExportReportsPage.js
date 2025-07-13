@@ -1,78 +1,86 @@
 import { useState } from "react";
-import useExportFinancialAnalyses from "~/hooks/dashboard/exports/useExportFinancialAnalyses";
-import BalanceSheet from "~/pages/Dashboard/owner/reports/BalanceSheet";
-import IncomeStatement from "~/pages/Dashboard/owner/reports/IncomeStatement";
-import FinancialAnalysis from "./ExportFinancialAnalysis";
+import { useExportReport } from "~/hooks/dashboard/owner/exports/useExportReport";
+import { Loader2, FileDown } from "lucide-react";
 
-const ExportPage = () => {
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
+export default function ExportsPage() {
+  const [reportType, setReportType] = useState("balanceSheet");
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
 
-  const [month, setMonth] = useState(currentMonth);
-  const [year, setYear] = useState(currentYear);
-
-  const { balanceSheet, incomeStatement, financialAnalysis, loading, error } =
-    useExportFinancialAnalyses({ month, year });
+  const { exportReport, loading } = useExportReport();
 
   const handleExport = () => {
-    // ❗ Bạn có thể tích hợp logic export tại đây (PDF, Excel, v.v.)
-    alert("Đang phát triển chức năng xuất file!");
+    exportReport({ reportType, month, year });
   };
 
   return (
-    <div className="px-6 pt-6 space-y-8">
-      <h1 className="text-3xl font-bold text-slate-800">
-        📁 Xuất Báo Cáo Tài Chính
-      </h1>
+    <div className="max-w-xl mx-auto px-4 py-8">
+      <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-200 transition hover:shadow-xl space-y-6">
+        <h1 className="text-2xl font-bold text-blue-800 flex items-center gap-2">
+          <FileDown className="w-6 h-6" />
+          <span>Xuất báo cáo tài chính</span>
+        </h1>
 
-      {/* Bộ lọc tháng năm */}
-      <div className="flex gap-4">
-        <select
-          className="border rounded px-3 py-2 text-base"
-          value={month}
-          onChange={(e) => setMonth(Number(e.target.value))}
-        >
-          {Array.from({ length: 12 }, (_, i) => (
-            <option key={i + 1} value={i + 1}>
-              Tháng {i + 1}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label className="block mb-1 font-medium text-gray-700">
+            🗂 Loại báo cáo
+          </label>
+          <select
+            className="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={reportType}
+            onChange={(e) => setReportType(e.target.value)}
+          >
+            <option value="balanceSheet">📊 Bảng cân đối kế toán</option>
+            <option value="incomeStatement">📈 Kết quả kinh doanh</option>
+          </select>
+        </div>
 
-        <select
-          className="border rounded px-3 py-2 text-base"
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-        >
-          {[2023, 2024, 2025].map((y) => (
-            <option key={y} value={y}>
-              Năm {y}
-            </option>
-          ))}
-        </select>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="block mb-1 font-medium text-gray-700">
+              📅 Tháng
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={12}
+              className="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={month}
+              onChange={(e) => setMonth(Number(e.target.value))}
+            />
+          </div>
+
+          <div className="flex-1">
+            <label className="block mb-1 font-medium text-gray-700">
+              📅 Năm
+            </label>
+            <input
+              type="number"
+              className="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+            />
+          </div>
+        </div>
 
         <button
+          className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold flex justify-center items-center gap-2 hover:bg-blue-700 transition disabled:opacity-60"
           onClick={handleExport}
-          className="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          disabled={loading}
         >
-          📤 Xuất file
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin w-5 h-5" />
+              Đang xuất...
+            </>
+          ) : (
+            <>
+              <FileDown className="w-5 h-5" />
+              Xuất báo cáo
+            </>
+          )}
         </button>
       </div>
-
-      {/* Hiển thị báo cáo */}
-      {loading ? (
-        <p>Đang tải dữ liệu...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : (
-        <div className="space-y-10">
-          <BalanceSheet data={balanceSheet} />
-          <IncomeStatement data={incomeStatement} />
-          <FinancialAnalysis data={financialAnalysis} />
-        </div>
-      )}
     </div>
   );
-};
-
-export default ExportPage;
+}

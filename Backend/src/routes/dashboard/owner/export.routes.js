@@ -6,7 +6,7 @@ const exportIncomeStatementController = require("../../../controllers/dashboard/
 
 // Cân đối kế toán
 router.get(
-  "/exports/balanBalanceSheet",
+  "/exports/balanceSheet",
   authenticate,
   authorize(["owner", "accountant"]),
   exportBalanceSheetController.exportBalanceSheet
@@ -14,7 +14,7 @@ router.get(
 
 // Kết quả kinh doanh
 router.get(
-  "/exports/income-statement",
+  "/exports/incomeStatement",
   authenticate,
   authorize(["owner", "accountant"]),
  exportIncomeStatementController.exportIncomeStatement
