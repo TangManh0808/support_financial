@@ -29,8 +29,14 @@ const Login = () => {
     try {
       const res = await loginAPI(form);
       login({ user: res.user, token: res.token });
-      navigate("/dashboard");
-      alert("Đăng nhập thành công");
+      // ✅ Điều hướng theo role
+      if (res.user.role === "owner") {
+        navigate("/dashboard");
+      } else if (res.user.role === "accountant") {
+        navigate("/accountant");
+      } else {
+        navigate("/unauthorized");
+      }
     } catch (err) {
       alert(err.response?.data?.message || "Đăng nhập thất bại");
     }

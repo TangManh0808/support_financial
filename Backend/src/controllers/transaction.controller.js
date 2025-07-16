@@ -4,24 +4,25 @@ const checkOwnership = require("../utils/checkOwnership");
 
 module.exports.getAll = async function (req, res) {
   try {
-    const { page = 1, limit = 10, month, year, search = "" } = req.query;
+    const { page = 1, limit = 10, month, year, search = "", type = "" } =
+      req.query;
     const company_id = req.user.company_id;
 
-    // Lấy danh sách giao dịch (theo trang)
     const transactions = await transactionService.getFilteredTransactions({
       company_id,
       month,
       year,
+      type, 
       search,
       page: +page,
       limit: +limit,
     });
 
-    // Lấy tổng số giao dịch (cho phân trang)
     const total = await transactionService.getTotalTransactions({
       company_id,
       month,
       year,
+      type, 
       search,
     });
 

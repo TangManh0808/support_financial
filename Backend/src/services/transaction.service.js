@@ -5,6 +5,7 @@ module.exports.getFilteredTransactions = async ({
   month,
   year,
   search,
+  type,
   page,
   limit,
 }) => {
@@ -29,6 +30,10 @@ module.exports.getFilteredTransactions = async ({
     query.andWhereRaw("YEAR(transactions.date) = ?", [year]);
   }
 
+  if (type) {
+    query.andWhere("transactions.type", type); // ✅ fix: bỏ [] vì không phải array
+  }
+
   if (search) {
     query.andWhere("transactions.description", "like", `%${search}%`);
   }
@@ -44,6 +49,7 @@ module.exports.getTotalTransactions = async ({
   month,
   year,
   search,
+  type, // ✅ THÊM type vào
 }) => {
   const query = db("transactions")
     .count("id as total")
@@ -55,6 +61,10 @@ module.exports.getTotalTransactions = async ({
 
   if (year) {
     query.andWhereRaw("YEAR(date) = ?", [year]);
+  }
+
+  if (type) {
+    query.andWhere("type", type); // ✅ fix giống getFiltered
   }
 
   if (search) {

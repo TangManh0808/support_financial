@@ -17,7 +17,7 @@ const CompanyInfo = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
+  // console.log();
   const handleSave = async () => {
     const res = await updateCompany({ ...company, ...form });
     if (res.success) alert("Cập nhật thành công");

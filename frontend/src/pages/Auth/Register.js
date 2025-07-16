@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register as registerUser } from "../../services/authService";
+import {
+  register as registerUser,
+  login as loginUser,
+} from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth"; // ✅ Quan trọng
 
 const Register = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState({});
   const navigate = useNavigate();
+  const { login } = useAuth(); // ✅ Sử dụng để cập nhật context và localStorage
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,11 +30,23 @@ const Register = () => {
     if (!validate()) return;
 
     try {
+      // ✅ 1. Gọi API đăng ký
       await registerUser(form);
+
+      // ✅ 2. Đăng nhập ngay sau khi đăng ký
+      const res = await loginUser({
+        email: form.email,
+        password: form.password,
+      });
+
+      // ✅ 3. Cập nhật context và localStorage
+      login(res.user, res.token); // <-- dùng context login
       alert("Đăng ký thành công!");
-      navigate("/login");
+
+      // ✅ 4. Chuyển tới bước setup công ty
+      navigate("/setupcompanyFirst");
     } catch (err) {
-      alert("Đăng ký thất bại.");
+      alert("Đăng ký thất bại: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -69,9 +86,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full p-2 border rounded mt-1 text-sm"
             />
-            {error.email && (
-              <p className="text-red-500 text-sm">{error.email}</p>
-            )}
+            {error.email && <p className="text-red-500 text-sm">{error.email}</p>}
           </div>
 
           <div>
@@ -84,9 +99,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full p-2 border rounded mt-1 text-sm"
             />
-            {error.password && (
-              <p className="text-red-500 text-sm">{error.password}</p>
-            )}
+            {error.password && <p className="text-red-500 text-sm">{error.password}</p>}
           </div>
 
           <button
@@ -110,7 +123,6 @@ const Register = () => {
         <img
           src="http://localhost:3001/anhlogin.jpg"
           alt="Illustration"
-          // className="w-full h-full object-contain"
           className="w-full h-full object-cover"
         />
       </div>

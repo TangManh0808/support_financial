@@ -14,13 +14,37 @@ exports.getAllUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const company_id = req.user.company_id;
-    const userData = req.body;
-    await userService.create({ ...userData, company_id });
-    res.json({ message: "Tạo người dùng thành công" });
+    const owner = req.user;
+    const { name, email, role } = req.body;
+
+    if (!name || !email || !role) {
+      return res.status(400).json({ message: "Thiếu thông tin người dùng" });
+    }
+
+    const existingUser = await userService.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ message: "Email đã tồn tại" });
+    }
+
+    const newUser = await userService.create({
+      name,
+      email,
+      role,
+      company_id: owner.company_id,
+    });
+
+    res.status(201).json({
+      message: "Tạo người dùng thành công",
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (error) {
-    console.error("Lỗi tạo user:", error);
-    res.status(500).json({ message: "Lỗi server", error: error.message });
+    console.error("Lỗi tạo người dùng:", error);
+    res.status(500).json({ message: "Lỗi server" });
   }
 };
 

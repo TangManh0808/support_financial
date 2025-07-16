@@ -22,9 +22,9 @@ const useUserManagement = () => {
   // ✅ Thêm người dùng mới
 const addUser = async (newUser) => {
   try {
-    await axios.post("/dashboard/owner/settings/users", newUser);
+    const res = await axios.post("/dashboard/owner/settings/users", newUser);
     await fetchUsers(); // ✅ đảm bảo dữ liệu đồng bộ
-    return { success: true };
+    return { success: true, data: res.data };
   } catch (err) {
     return {
       success: false,

@@ -11,6 +11,11 @@ import ReportsPage from "./pages/Dashboard/owner/reports/ReportsPage";
 import AnalysesPage from "./pages/Dashboard/owner/analyses/AnalysesPage";
 import SettingsPage from "./pages/Dashboard/owner/settings/SettingsPage";
 import ExportPage from "~/pages/Dashboard/owner/exports/ExportReportsPage";
+import SetupCompany from "./pages/Dashboard/owner/SetupCompany";
+// accountant
+import AccountantLayout from "~/layouts/AccountantLayout";
+import AccountantDashboard from "./pages/Dashboard/accountant/AccountantDashboard";
+import AccountantTransactions from "./pages/Dashboard/accountant/AccountantTransactions";
 
 function App() {
   return (
@@ -27,8 +32,8 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute role="owner">
-                <OwnerLayout />
+              <PrivateRoute role="owner" requireCompanyId={true}>
+                <OwnerLayout /> {/* layout bên trong sẽ switch theo role */}
               </PrivateRoute>
             }
           >
@@ -48,6 +53,32 @@ function App() {
               <div className="text-center mt-20">404 - Không tìm thấy</div>
             }
           />
+
+          {/* Route cho owner chưa có công ty */}
+          <Route
+            path="/setupcompanyFirst"
+            element={
+              <PrivateRoute role="owner">
+                <SetupCompany />
+              </PrivateRoute>
+            }
+          />
+          {/* {Route cho accountant} */}
+          <Route
+            path="/accountant"
+            element={
+              <PrivateRoute role="accountant">
+                <AccountantLayout />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<AccountantDashboard />} />
+            <Route path="transactions" element={<AccountantTransactions />} />
+            {/* <Route path="reports" element={<AccountantReports />} />
+            <Route path="analyses" element={<AccountantAnalyses />} />
+            <Route path="exports" element={<AccountantExports />} />
+            <Route path="settings" element={<AccountantSettings />} /> */}
+          </Route>
         </Routes>
       </Router>
     </GlobalStyles>

@@ -20,6 +20,7 @@ const settingsRoutes = require("./routes/dashboard/owner/settings.routes");
 const fileRoutes = require("./routes/files.route");
 const exportRoutes = require("./routes/dashboard/owner/export.routes");
 const path = require("path");
+const SetupCompanyRoutes = require("./routes/dashboard/owner/setupCompanyFirst.routes");
 // import routes
 
 //
@@ -46,6 +47,7 @@ server.use("/dashboard/owner", analysesRoutes);
 server.use("/dashboard/owner/settings", settingsRoutes);
 server.use("/dashboard/owner/settings/files", fileRoutes);
 server.use("/dashboard/owner", exportRoutes);
+server.use("/dashboard/owner", SetupCompanyRoutes);
 
 //
 server.listen(PORT, function (req, res) {

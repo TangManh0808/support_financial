@@ -12,15 +12,39 @@ module.exports.register = async ({ name, email, password }) => {
   if (existingUser) {
     throw new Error("Email đã tồn tại");
   }
+  const role = "owner";
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
   const [newUserId] = await db("users").insert({
     name,
     email,
     password: hashedPassword,
+    role,
   });
+  // Lấy lại thông tin để trả về đầy đủ
+  const newUser = await db("users").where({ id: newUserId }).first();
+
+  const token = jwt.sign(
+    {
+      id: newUser.id,
+      email: newUser.email,
+      role: newUser.role,
+      company_id: newUser.company_id,
+    },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
   // console.log(existingUser);
-  return { id: newUserId, name, email };
+  return {
+    token,
+    user: {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      company_id: newUser.company_id || null,
+    },
+  };
 };
 
 module.exports.login = async ({ email, password }) => {
@@ -48,6 +72,12 @@ module.exports.login = async ({ email, password }) => {
 
   return {
     token,
-    user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      company_id: user.company_id,
+    },
   };
 };
