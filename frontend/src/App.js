@@ -16,6 +16,7 @@ import SetupCompany from "./pages/Dashboard/owner/SetupCompany";
 import AccountantLayout from "~/layouts/AccountantLayout";
 import AccountantDashboard from "./pages/Dashboard/accountant/AccountantDashboard";
 import AccountantTransactions from "./pages/Dashboard/accountant/AccountantTransactions";
+import AccountantReports from "./pages/Dashboard/accountant/AccountantReports"
 
 function App() {
   return (
@@ -74,8 +75,8 @@ function App() {
           >
             <Route index element={<AccountantDashboard />} />
             <Route path="transactions" element={<AccountantTransactions />} />
-            {/* <Route path="reports" element={<AccountantReports />} />
-            <Route path="analyses" element={<AccountantAnalyses />} />
+            <Route path="reports" element={<AccountantReports />} />
+            {/* <Route path="analyses" element={<AccountantAnalyses />} />
             <Route path="exports" element={<AccountantExports />} />
             <Route path="settings" element={<AccountantSettings />} /> */}
           </Route>
