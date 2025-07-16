@@ -87,18 +87,19 @@ module.exports.createOne = async function (
   amount,
   description
 ) {
-  let result = await db("transactions").insert([
+  return await db("transactions").insert([
     {
-      company_id: company_id,
-      user_id: user_id,
-      category_id: category_id,
-      type: type,
-      date: date,
-      amount: amount,
-      description: description,
+      company_id,
+      user_id,
+      category_id,
+      type,
+      date,
+      amount,
+      description,
     },
   ]);
 };
+
 module.exports.updateOne = async function (
   id,
   company_id,
@@ -110,15 +111,16 @@ module.exports.updateOne = async function (
   description
 ) {
   return await db("transactions").where("id", +id).update({
-    company_id: company_id,
-    user_id: user_id,
-    category_id: category_id,
-    type: type,
-    date: date,
-    amount: amount,
-    description: description,
+    company_id,
+    user_id,
+    category_id,
+    type,
+    date,
+    amount,
+    description,
   });
 };
+
 module.exports.deleteOne = async function (id) {
   return await db("transactions").where("id", +id).del();
 };

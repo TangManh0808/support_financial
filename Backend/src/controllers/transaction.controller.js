@@ -4,15 +4,21 @@ const checkOwnership = require("../utils/checkOwnership");
 
 module.exports.getAll = async function (req, res) {
   try {
-    const { page = 1, limit = 10, month, year, search = "", type = "" } =
-      req.query;
+    const {
+      page = 1,
+      limit = 10,
+      month,
+      year,
+      search = "",
+      type = "",
+    } = req.query;
     const company_id = req.user.company_id;
 
     const transactions = await transactionService.getFilteredTransactions({
       company_id,
       month,
       year,
-      type, 
+      type,
       search,
       page: +page,
       limit: +limit,
@@ -22,7 +28,7 @@ module.exports.getAll = async function (req, res) {
       company_id,
       month,
       year,
-      type, 
+      type,
       search,
     });
 
@@ -44,7 +50,8 @@ module.exports.getOne = async function (req, res) {
   try {
     let { id } = req.params;
     let result = await transactionService.getOne(id);
-    console.log(result.company_id);
+    // console.log(result.company_id);
+
     if (!result)
       return res.status(404).json({ message: "Không tìm thấy giao dịch" });
     if (!checkOwnership(result.company_id, req)) {
@@ -66,14 +73,14 @@ module.exports.getOne = async function (req, res) {
 };
 module.exports.createOne = async function (req, res) {
   try {
-    let { company_id, user_id, category_id, type, date, amount, description } =
-      req.body;
-    if (!checkOwnership(company_id, req)) {
-      return res
-        .status(403)
-        .json({ message: "Bạn không có quyền tạo giao dịch cho công ty này" });
-    }
-    let result = await transactionService.createOne(
+    const { category_id, type, date, amount, description } = req.body;
+
+    // Lấy từ req.user
+    const company_id = req.user.company_id;
+    const user_id = req.user.id;
+    console.log(company_id);
+
+    const result = await transactionService.createOne(
       company_id,
       user_id,
       category_id,
@@ -82,20 +89,24 @@ module.exports.createOne = async function (req, res) {
       amount,
       description
     );
+
     res.json({
       result,
-      message: "Create one transaction successfully",
+      message: "Tạo giao dịch thành công",
     });
   } catch (error) {
-    res.json({
-      error,
-      message: "Error",
+    console.error("❌ Lỗi khi tạo giao dịch:", error);
+    res.status(500).json({
+      message: "Lỗi server",
+      error: error.message,
     });
   }
 };
+
 module.exports.updateOne = async function (req, res) {
   try {
     const { id } = req.params;
+    // console.log(id);
     const oldTransaction = await transactionService.getOne(id);
 
     if (!oldTransaction)
@@ -106,15 +117,10 @@ module.exports.updateOne = async function (req, res) {
         .json({ message: "Bạn không có quyền sửa giao dịch này" });
     }
 
-    const {
-      company_id,
-      user_id,
-      category_id,
-      type,
-      date,
-      amount,
-      description,
-    } = req.body;
+    // chỉ cho phép sửa các trường cho phép
+    const { category_id, type, date, amount, description } = req.body;
+    const company_id = req.user.company_id;
+    const user_id = req.user.id;
 
     await transactionService.updateOne(
       id,
@@ -132,23 +138,39 @@ module.exports.updateOne = async function (req, res) {
     res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
+
 module.exports.deleteOne = async function (req, res) {
   try {
     const { id } = req.params;
+    console.log(id);
+    // 1. Lấy giao dịch từ DB
     const transaction = await transactionService.getOne(id);
+    console.log(transaction);
 
-    if (!transaction)
+    if (!transaction) {
       return res.status(404).json({ message: "Không tìm thấy giao dịch" });
-    if (!checkOwnership(transaction.company_id, req)) {
+    }
+
+    // 2. Kiểm tra quyền xoá
+    const ownerCompany = transaction.company_id;
+    const currentUserCompany = req.user.company_id;
+    const currentUserId = req.user.id;
+
+    if (!checkOwnership(ownerCompany, req)) {
+      console.warn(
+        `❌ Người dùng [id=${currentUserId}] cố gắng xoá giao dịch không thuộc công ty của họ (transaction.company_id=${ownerCompany}, req.user.company_id=${currentUserCompany})`
+      );
       return res
         .status(403)
         .json({ message: "Bạn không có quyền xoá giao dịch này" });
     }
 
+    // 3. Tiến hành xoá
     await transactionService.deleteOne(id);
 
     res.json({ message: "Xoá giao dịch thành công" });
   } catch (error) {
+    console.error("❌ Lỗi server khi xoá giao dịch:", error);
     res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAccountantTransactions } from "~/hooks/dashboard/accountant/transactions/useAccountantTransactions";
 import { useCategories } from "~/hooks/dashboard/accountant/transactions/useCategories";
+import CategoryManagerModal from "./CategoryManagerModal";
 
 const AccountantTransactions = () => {
   const {
@@ -14,9 +15,11 @@ const AccountantTransactions = () => {
     setFilters,
     addTransaction,
     deleteTransaction,
+    updateTransaction, // ✅ thêm
   } = useAccountantTransactions();
 
-  const { categories = [], loadingCategories } = useCategories(); // fallback []
+  const { categories } = useCategories();
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   const [newTransaction, setNewTransaction] = useState({
     date: "",
@@ -26,23 +29,37 @@ const AccountantTransactions = () => {
     category_id: "",
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+
   const totalPages = Math.ceil(total / limit);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
-    setPage(1); // reset về trang đầu khi lọc
+    setPage(1);
   };
 
-  const handleAdd = async () => {
+  const handleSubmit = async () => {
     const { date, amount, description, type, category_id } = newTransaction;
     if (!date || !amount || !category_id)
       return alert("Vui lòng nhập đầy đủ thông tin");
 
     try {
-      await addTransaction({
-        ...newTransaction,
-        amount: +amount,
-      });
+      if (isEditing) {
+        await updateTransaction(editingId, {
+          ...newTransaction,
+          amount: +amount,
+        });
+        alert("Cập nhật thành công");
+      } else {
+        await addTransaction({
+          ...newTransaction,
+          amount: +amount,
+        });
+        alert("Thêm giao dịch thành công");
+      }
+
+      // Reset form
       setNewTransaction({
         date: "",
         description: "",
@@ -50,14 +67,24 @@ const AccountantTransactions = () => {
         type: "revenue",
         category_id: "",
       });
+      setIsEditing(false);
+      setEditingId(null);
     } catch (err) {
-      alert("Lỗi khi thêm giao dịch");
+      alert(isEditing ? "Lỗi khi cập nhật" : "Lỗi khi thêm giao dịch");
     }
   };
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Giao dịch kế toán</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Giao dịch kế toán</h1>
+        <button
+          onClick={() => setShowCategoryModal(true)}
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+        >
+          Chỉnh sửa danh mục giao dịch Công ty
+        </button>
+      </div>
 
       {/* BỘ LỌC */}
       <div className="flex gap-4 flex-wrap items-center">
@@ -110,7 +137,7 @@ const AccountantTransactions = () => {
         />
       </div>
 
-      {/* FORM THÊM */}
+      {/* FORM THÊM / SỬA */}
       <div className="grid grid-cols-6 gap-3">
         <input
           type="date"
@@ -144,44 +171,45 @@ const AccountantTransactions = () => {
         <select
           value={newTransaction.type}
           onChange={(e) =>
-            setNewTransaction({ ...newTransaction, type: e.target.value })
+            setNewTransaction({
+              ...newTransaction,
+              type: e.target.value,
+              category_id: "",
+            })
           }
           className="border px-2 py-1 rounded"
         >
           <option value="revenue">Thu</option>
           <option value="expense">Chi</option>
         </select>
-
-        {/* CHỌN DANH MỤC */}
-        {loadingCategories ? (
-          <p>Đang tải danh mục...</p>
-        ) : (
-          <select
-            value={newTransaction.category_id}
-            onChange={(e) =>
-              setNewTransaction({
-                ...newTransaction,
-                category_id: e.target.value,
-              })
-            }
-            className="border px-2 py-1 rounded"
-          >
-            <option value="">-- Chọn danh mục --</option>
-            {categories
-              .filter((c) => c.type === newTransaction.type)
-              .map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-          </select>
-        )}
-
-        <button
-          onClick={handleAdd}
-          className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+        <select
+          value={newTransaction.category_id}
+          onChange={(e) =>
+            setNewTransaction({
+              ...newTransaction,
+              category_id: e.target.value,
+            })
+          }
+          className="border px-2 py-1 rounded"
         >
-          Thêm
+          <option value="">-- Chọn danh mục --</option>
+          {categories
+            .filter((c) => c.type === newTransaction.type)
+            .map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+        </select>
+        <button
+          onClick={handleSubmit}
+          className={`${
+            isEditing
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-blue-600 hover:bg-blue-700"
+          } text-white px-4 py-1 rounded`}
+        >
+          {isEditing ? "Lưu" : "Thêm"}
         </button>
       </div>
 
@@ -212,7 +240,23 @@ const AccountantTransactions = () => {
                 </td>
                 <td className="border px-2 py-1 capitalize">{t.type}</td>
                 <td className="border px-2 py-1">{t.category_name}</td>
-                <td className="border px-2 py-1">
+                <td className="border px-2 py-1 flex gap-2">
+                  <button
+                    onClick={() => {
+                      setIsEditing(true);
+                      setEditingId(t.id);
+                      setNewTransaction({
+                        date: t.date.slice(0, 10),
+                        description: t.description,
+                        amount: t.amount,
+                        type: t.type,
+                        category_id: t.category_id,
+                      });
+                    }}
+                    className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+                  >
+                    Sửa
+                  </button>
                   <button
                     onClick={() => deleteTransaction(t.id)}
                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
@@ -246,6 +290,13 @@ const AccountantTransactions = () => {
           Trang sau →
         </button>
       </div>
+
+      {/* MODAL QUẢN LÝ DANH MỤC */}
+      <CategoryManagerModal
+        isOpen={showCategoryModal}
+        onClose={() => setShowCategoryModal(false)}
+        refresh={() => window.location.reload()}
+      />
     </div>
   );
 };
