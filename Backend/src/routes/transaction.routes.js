@@ -20,21 +20,21 @@ router.get(
 router.post(
   "/",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
+  authorize(["owner", "accountant"]),
   transactionController.createOne
 );
 
 router.put(
   "/:id",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
+  authorize(["owner", "accountant"]),
   transactionController.updateOne
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorize(["admin", "owner", "accountant"]),
+  authorize(["owner", "accountant"]),
   transactionController.deleteOne
 );
 

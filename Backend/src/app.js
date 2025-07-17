@@ -21,6 +21,9 @@ const fileRoutes = require("./routes/files.route");
 const exportRoutes = require("./routes/dashboard/owner/export.routes");
 const path = require("path");
 const SetupCompanyRoutes = require("./routes/dashboard/owner/setupCompanyFirst.routes");
+const setupRoutes = require("./routes/dashboard/admin/setup.routes");
+const internalRoutes = require("./routes/dashboard/admin/internal.routes");
+const activityLogRoutes = require("./routes/dashboard/admin/activityLog.routes");
 // import routes
 
 //
@@ -48,7 +51,9 @@ server.use("/dashboard/owner/settings", settingsRoutes);
 server.use("/dashboard/owner/settings/files", fileRoutes);
 server.use("/dashboard/owner", exportRoutes);
 server.use("/dashboard/owner", SetupCompanyRoutes);
-
+server.use("/setup", setupRoutes);
+server.use("/internal", internalRoutes);
+server.use("/activity-logs", activityLogRoutes);
 //
 server.listen(PORT, function (req, res) {
   console.log(`Server is running on port:http://localhost:${PORT}`);
