@@ -34,7 +34,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
-  authorize(["admin", "owner"]),
+  authorize(["admin", "owner", "accountant"]),
   financial_inputController.deleteOne
 );
 

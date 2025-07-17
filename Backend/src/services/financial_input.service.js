@@ -1,7 +1,14 @@
 const db = require("../config/knex");
-module.exports.getAll = async function () {
-  return await db("financial_inputs").select("*");
+
+module.exports.getAll = async function ({ month, year }) {
+  let query = db("financial_inputs").select("*");
+
+  if (month) query.where("month", +month);
+  if (year) query.where("year", +year);
+
+  return await query;
 };
+
 module.exports.getOne = async function (id) {
   return await db("financial_inputs").where("id", +id).first();
 };
@@ -15,18 +22,19 @@ module.exports.createOne = async function (
   value,
   note
 ) {
-  let result = await db("financial_inputs").insert([
+  return await db("financial_inputs").insert([
     {
-      company_id: company_id,
-      user_id: user_id,
-      month: month,
-      year: year,
-      field: field,
-      value: value,
-      note: note,
+      company_id,
+      user_id,
+      month,
+      year,
+      field,
+      value,
+      note,
     },
   ]);
 };
+
 module.exports.updateOne = async function (
   id,
   company_id,
@@ -38,15 +46,16 @@ module.exports.updateOne = async function (
   note
 ) {
   return await db("financial_inputs").where("id", +id).update({
-    company_id: company_id,
-    user_id: user_id,
-    month: month,
-    year: year,
-    field: field,
-    value: value,
-    note: note,
+    company_id,
+    user_id,
+    month,
+    year,
+    field,
+    value,
+    note,
   });
 };
+
 module.exports.deleteOne = async function (id) {
   return await db("financial_inputs").where("id", +id).del();
 };
