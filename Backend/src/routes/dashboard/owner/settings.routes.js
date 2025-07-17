@@ -13,7 +13,7 @@ const {
 router.get(
   "/company",
   authenticate,
-  authorize(["owner", "admin"]),
+  authorize(["owner", "admin", "accountant"]),
   companyController.getCompanyInfo
 );
 

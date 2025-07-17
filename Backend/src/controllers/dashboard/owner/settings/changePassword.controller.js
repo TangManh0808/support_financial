@@ -6,6 +6,7 @@ exports.changePassword = async (req, res) => {
     const userId = req.user.id;
     const { currentPassword, newPassword } = req.body;
 
+
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: "Thiếu mật khẩu" });
     }
@@ -15,7 +16,7 @@ exports.changePassword = async (req, res) => {
       currentPassword,
       newPassword,
     });
-
+    // alert("Đổi mật khẩu thành công");
     res.json({ message: "Đổi mật khẩu thành công" });
   } catch (error) {
     res.status(400).json({ message: error.message });

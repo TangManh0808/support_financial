@@ -50,7 +50,8 @@ module.exports.getOne = async function (req, res) {
 
 module.exports.createOne = async function (req, res) {
   try {
-    let { company_id, user_id, month, year, field, value, note } = req.body;
+    let { company_id, month, year, field, value, note } = req.body;
+    const user_id = req.user.id;
 
     if (!checkOwnership(company_id, req)) {
       return res
@@ -83,7 +84,8 @@ module.exports.createOne = async function (req, res) {
 module.exports.updateOne = async function (req, res) {
   try {
     let { id } = req.params;
-    let { company_id, user_id, month, year, field, value, note } = req.body;
+    let { company_id, month, year, field, value, note } = req.body;
+    const user_id = req.user.id;
 
     const input = await financial_inputService.getOne(id);
     if (!input)

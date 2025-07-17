@@ -18,6 +18,8 @@ import AccountantDashboard from "./pages/Dashboard/accountant/AccountantDashboar
 import AccountantTransactions from "./pages/Dashboard/accountant/AccountantTransactions";
 import AccountantReports from "./pages/Dashboard/accountant/AccountantReports";
 import AccountantAnalyses from "~/pages/Dashboard/accountant/AccountantAnalyses";
+import AccountantExports from "~/pages/Dashboard/accountant/AccountantExports";
+import AccountantSettings from "~/pages/Dashboard/accountant/AccountantSettings";
 function App() {
   return (
     <GlobalStyles>
@@ -77,8 +79,8 @@ function App() {
             <Route path="transactions" element={<AccountantTransactions />} />
             <Route path="reports" element={<AccountantReports />} />
             <Route path="analyses" element={<AccountantAnalyses />} />
-            {/* <Route path="exports" element={<AccountantExports />} />
-            <Route path="settings" element={<AccountantSettings />} /> */}
+            <Route path="exports" element={<AccountantExports />} />
+            <Route path="settings" element={<AccountantSettings />} />
           </Route>
         </Routes>
       </Router>
