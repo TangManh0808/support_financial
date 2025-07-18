@@ -12,7 +12,7 @@ const authenticate = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
 
-  console.log("Vao auth", token);
+  // console.log("Vao auth", token);
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // đính kèm thông tin user

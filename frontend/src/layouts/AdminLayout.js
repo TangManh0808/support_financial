@@ -1,24 +1,26 @@
+// src/layouts/AdminLayout.jsx
+import SidebarAdmin from "~/components/layout/admin/SidebarAdmin";
+import HeaderAdmin from "~/components/layout/admin/HeaderAdmin";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/layout/Sidebar";
-import Header from "../components/layout/Header";
+import { useState } from "react";
+const AdminLayout = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-const AccountantLayout = () => {
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <div className="flex">
-      {/* Sidebar cố định bên trái */}
-      <div className="fixed left-0 top-0 h-screen w-64 z-50">
-        <Sidebar />
-      </div>
-
-      {/* Nội dung bên phải sidebar */}
-      <div className="ml-64 flex flex-col w-full">
-        {/* Header cố định trên cùng */}
-        <div className="fixed top-0 left-64 right-0 z-40">
-          <Header />
+    <div className="flex h-screen overflow-hidden">
+      <SidebarAdmin isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+      <div className="flex-1 flex flex-col">
+        {/* HEADER DÍNH TRÊN */}
+        <div className="sticky top-0 z-50 bg-white shadow">
+          <HeaderAdmin toggleSidebar={toggleSidebar} />
         </div>
 
-        {/* Nội dung chính có padding top để không che header */}
-        <main className="mt-[100px] p-4 bg-gray-100 min-h-screen">
+        {/* MAIN CONTENT CUỘN ĐƯỢC */}
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
           <Outlet />
         </main>
       </div>
@@ -26,4 +28,4 @@ const AccountantLayout = () => {
   );
 };
 
-export default AccountantLayout;
+export default AdminLayout;

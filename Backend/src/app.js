@@ -24,6 +24,13 @@ const SetupCompanyRoutes = require("./routes/dashboard/owner/setupCompanyFirst.r
 const setupRoutes = require("./routes/dashboard/admin/setup.routes");
 const internalRoutes = require("./routes/dashboard/admin/internal.routes");
 const activityLogRoutes = require("./routes/dashboard/admin/activityLog.routes");
+// admin
+const adminOverview = require("./routes/dashboard/admin/overview.routes");
+const adminUser = require("./routes/dashboard/admin/users/users.routes");
+const adminCompanyRoutes = require("./routes/dashboard/admin/companies/companies.routes");
+const admincategoriesRoutes = require("./routes/dashboard/admin/categories/categories.routes");
+const adminActivityLogsRoutes = require("./routes/dashboard/admin/activity-logs/activityLogs.routes");
+
 // import routes
 
 //
@@ -54,6 +61,12 @@ server.use("/dashboard/owner", SetupCompanyRoutes);
 server.use("/setup", setupRoutes);
 server.use("/internal", internalRoutes);
 server.use("/activity-logs", activityLogRoutes);
+server.use("/admin/overview", adminOverview);
+server.use("/admin/users", adminUser);
+server.use("/admin/companies", adminCompanyRoutes);
+server.use("/admin/categories", admincategoriesRoutes);
+server.use("/admin/activity-logs", adminActivityLogsRoutes);
+
 //
 server.listen(PORT, function (req, res) {
   console.log(`Server is running on port:http://localhost:${PORT}`);

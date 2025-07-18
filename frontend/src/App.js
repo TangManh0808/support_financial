@@ -20,6 +20,15 @@ import AccountantReports from "./pages/Dashboard/accountant/AccountantReports";
 import AccountantAnalyses from "~/pages/Dashboard/accountant/AccountantAnalyses";
 import AccountantExports from "~/pages/Dashboard/accountant/AccountantExports";
 import AccountantSettings from "~/pages/Dashboard/accountant/AccountantSettings";
+// admin
+import AdminLayout from "~/layouts/AdminLayout";
+import AdminLogin from "~/pages/Auth/admin/AdminLogin";
+import AdminDashboard from "~/pages/Dashboard/admin/AdminDashboard";
+import AdminUserPage from "~/pages/Dashboard/admin/AdminUserPage";
+import AdminCompaniesPage from "~/pages/Dashboard/admin/AdminCompaniesPage";
+import AdminCategoriesPage from "~/pages/Dashboard/admin/AdminCategoriesPage";
+import AdminActivityLogsPage from "~/pages/Dashboard/admin/AdminActivityLogsPage";
+
 function App() {
   return (
     <GlobalStyles>
@@ -28,6 +37,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* ✅ Route cần bảo vệ */}
 
@@ -81,6 +91,33 @@ function App() {
             <Route path="analyses" element={<AccountantAnalyses />} />
             <Route path="exports" element={<AccountantExports />} />
             <Route path="settings" element={<AccountantSettings />} />
+          </Route>
+
+          {/* {Route cho admin} */}
+          {/* ADMIN ROUTES */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute role="admin">
+                <AdminLayout />
+              </PrivateRoute>
+            }
+          >
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/admin-dashboard/users" element={<AdminUserPage />} />
+
+            <Route
+              path="/admin-dashboard/companies"
+              element={<AdminCompaniesPage />}
+            />
+            <Route
+              path="/admin-dashboard/categories"
+              element={<AdminCategoriesPage />}
+            />
+            <Route
+              path="/admin-dashboard/activity-logs"
+              element={<AdminActivityLogsPage />}
+            />
           </Route>
         </Routes>
       </Router>

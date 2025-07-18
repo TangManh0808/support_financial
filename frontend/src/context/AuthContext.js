@@ -3,50 +3,64 @@ import { createContext, useState, useEffect } from "react";
 // Tạo context
 export const AuthContext = createContext();
 
-// Provider dùng bọc toàn bộ app
+// Provider
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(true); // 🆕
+  const [role, setRole] = useState("user"); // ✅ role hiện tại (admin | user)
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  // Khi App load, khôi phục user từ localStorage (nếu có)
   useEffect(() => {
+    const savedAdmin = localStorage.getItem("adminUser");
     const savedUser = localStorage.getItem("user");
-    if (savedUser && savedUser !== "undefined") {
+
+    if (savedAdmin && savedAdmin !== "undefined") {
+      setUser(JSON.parse(savedAdmin));
+      setRole("admin");
+    } else if (savedUser && savedUser !== "undefined") {
       setUser(JSON.parse(savedUser));
+      setRole("user");
     }
-    setIsLoadingUser(false); // 🆕 Đánh dấu đã load xong
+
+    setIsLoadingUser(false);
   }, []);
 
-  /**
-   * Hàm login:
-   * - Nếu gọi từ API login: truyền vào { token, user }
-   * - Nếu cập nhật user sau khi tạo công ty: chỉ truyền user (object)
-   */
   const login = (userOrPayload, maybeToken) => {
     if (userOrPayload?.token && userOrPayload?.user) {
-      // Trường hợp: login từ API
-      localStorage.setItem("token", userOrPayload.token);
-      localStorage.setItem("user", JSON.stringify(userOrPayload.user));
-      setUser(userOrPayload.user);
+      const { token, user } = userOrPayload;
+
+      if (user.role === "admin") {
+        localStorage.setItem("adminToken", token);
+        localStorage.setItem("adminUser", JSON.stringify(user));
+        setRole("admin");
+      } else {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        setRole("user");
+      }
+      setUser(user);
     } else {
-      // Trường hợp: cập nhật user sau khi tạo công ty
+      // Trường hợp update thủ công sau đăng ký hoặc tạo công ty
       if (maybeToken) {
         localStorage.setItem("token", maybeToken);
       }
       localStorage.setItem("user", JSON.stringify(userOrPayload));
       setUser(userOrPayload);
+      setRole("user");
     }
   };
 
-  // Hàm logout
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
+
     setUser(null);
+    setRole("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoadingUser }}>
+    <AuthContext.Provider value={{ user, role, login, logout, isLoadingUser }}>
       {children}
     </AuthContext.Provider>
   );

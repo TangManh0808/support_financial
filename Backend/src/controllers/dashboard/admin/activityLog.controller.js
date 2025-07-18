@@ -1,3 +1,4 @@
+
 const activityLogService = require("../../../services/dashboard/admin/activityLog.service");
 
 module.exports.getAllLogs = async (req, res) => {
