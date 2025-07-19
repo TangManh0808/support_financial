@@ -7,7 +7,7 @@ const IncomeStatement = ({ data }) => {
 
   // 👇 Lấy dữ liệu từ cấu trúc lồng nhau
   const report = data || {};
-  console.log(report);
+  // console.log(report);
 
   const {
     revenue = 0,

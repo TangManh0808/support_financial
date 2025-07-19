@@ -11,7 +11,7 @@ const useFinancialAnalyses = ({ month, year }) => {
         const res = await axios.get("/dashboard/owner/analyses", {
           params: { month, year },
         });
-        console.log(res.data);
+        // console.log(res.data);
         setData(res.data);
       } catch (err) {
         console.error("Lỗi khi lấy chỉ số phân tích:", err);

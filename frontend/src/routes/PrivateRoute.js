@@ -10,8 +10,8 @@ const PrivateRoute = ({ children, role, requireCompanyId = false }) => {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  console.log(user.role);
-  console.log(role);
+  // console.log(user.role);
+  // console.log(role);
   if (role && user.role !== role) {
     return <Navigate to="/unauthorized" replace />;
   }
