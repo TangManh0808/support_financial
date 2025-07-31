@@ -15,10 +15,15 @@ const AccountantTransactions = () => {
     setFilters,
     addTransaction,
     deleteTransaction,
-    updateTransaction, // ✅ thêm
+    updateTransaction,
   } = useAccountantTransactions();
 
-  const { categories } = useCategories();
+  const {
+    categories,
+    loadingCategories,
+    error: categoriesError,
+  } = useCategories();
+
   const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   const [newTransaction, setNewTransaction] = useState({
@@ -182,6 +187,7 @@ const AccountantTransactions = () => {
           <option value="revenue">Thu</option>
           <option value="expense">Chi</option>
         </select>
+
         <select
           value={newTransaction.category_id}
           onChange={(e) =>
@@ -193,14 +199,22 @@ const AccountantTransactions = () => {
           className="border px-2 py-1 rounded"
         >
           <option value="">-- Chọn danh mục --</option>
-          {categories
-            .filter((c) => c.type === newTransaction.type)
-            .map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
+          {loadingCategories ? (
+            <option disabled>Đang tải...</option>
+          ) : categoriesError ? (
+            <option disabled>Lỗi tải danh mục</option>
+          ) : (
+            Array.isArray(categories) &&
+            categories
+              .filter((c) => c.type === newTransaction.type)
+              .map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))
+          )}
         </select>
+
         <button
           onClick={handleSubmit}
           className={`${

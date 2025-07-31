@@ -62,12 +62,12 @@ function App() {
           </Route>
 
           {/* 404 page */}
-          <Route
+          {/* <Route
             path="*"
             element={
               <div className="text-center mt-20">404 - Không tìm thấy</div>
             }
-          />
+          /> */}
 
           {/* Route cho owner chưa có công ty */}
           <Route

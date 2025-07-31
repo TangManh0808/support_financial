@@ -6,6 +6,7 @@ export const useCategories = () => {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState(null);
 
+  // Hàm lấy token
   const getAuthHeader = () => {
     const token = localStorage.getItem("token");
     return {
@@ -13,13 +14,17 @@ export const useCategories = () => {
     };
   };
 
+  // Gọi API lấy danh sách danh mục
   const fetchCategories = async () => {
     try {
       setLoadingCategories(true);
       const res = await axios.get("http://localhost:3000/transaction_categories", {
         headers: getAuthHeader(),
       });
-      setCategories(res.data.result); // ✅
+
+      // ✅ Chỉ lấy phần `result.data` là mảng categories
+      const list = res.data?.result?.data || [];
+      setCategories(list);
     } catch (err) {
       console.error("Lỗi khi lấy danh mục:", err);
       setError(err);
@@ -28,48 +33,7 @@ export const useCategories = () => {
     }
   };
 
-  const createCategory = async ({ company_id, name, type }) => {
-    try {
-      const res = await axios.post(
-        "http://localhost:3000/transaction_categories",
-        { company_id, name, type },
-        { headers: getAuthHeader() }
-      );
-      await fetchCategories(); // Refresh danh sách sau khi thêm
-      return res.data;
-    } catch (err) {
-      console.error("Lỗi khi tạo danh mục:", err);
-      throw err;
-    }
-  };
-
-  const updateCategory = async ({ id, company_id, name, type }) => {
-    try {
-      await axios.put(
-        `http://localhost:3000/transaction_categories/${id}`,
-        { company_id, name, type },
-        { headers: getAuthHeader() }
-      );
-      await fetchCategories();
-    } catch (err) {
-      console.error("Lỗi khi cập nhật danh mục:", err);
-      throw err;
-    }
-  };
-
-  const deleteCategory = async (id) => {
-    try {
-      await axios.delete(
-        `http://localhost:3000/transaction_categories/${id}`,
-        { headers: getAuthHeader() }
-      );
-      await fetchCategories();
-    } catch (err) {
-      console.error("Lỗi khi xoá danh mục:", err);
-      throw err;
-    }
-  };
-
+  // Gọi khi load lần đầu
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -79,8 +43,5 @@ export const useCategories = () => {
     loadingCategories,
     error,
     fetchCategories,
-    createCategory,
-    updateCategory,
-    deleteCategory,
   };
 };

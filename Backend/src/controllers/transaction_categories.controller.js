@@ -4,20 +4,29 @@ const checkOwnership = require("../utils/checkOwnership");
 
 module.exports.getAll = async function (req, res) {
   try {
-    let result = await transaction_categoriesService.getAll();
-    console.log(result);
-    const filtered =
-      req.user.role === "admin"
-        ? result
-        : result.filter((c) => c.company_id === req.user.company_id);
-    res.json({ result: filtered });
+    const { page = 1, limit = 10, search = "", type = "" } = req.query;
+    const isAdmin = req.user.role === "admin";
+    const company_id = isAdmin ? null : req.user.company_id;
+
+    const result = await transaction_categoriesService.getAll({
+      page: +page,
+      limit: +limit,
+      search,
+      type,
+      company_id,
+    });
+
+    res.json({ result });
   } catch (error) {
-    res.json({
+    console.error("❌ Lỗi khi lấy danh sách danh mục:", error);
+    res.status(500).json({
       error,
-      message: "Error occured",
+      message: "Lỗi server",
     });
   }
 };
+
+
 module.exports.getOne = async function (req, res) {
   try {
     let { id } = req.params;

@@ -17,16 +17,16 @@ const CategoryManagerModal = ({ isOpen, onClose, refresh }) => {
     if (isOpen) fetchCategories();
   }, [isOpen]);
 
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/transaction_categories", {
-        headers: getAuthHeader(),
-      });
-      setCategories(res.data.result || []);
-    } catch (err) {
-      console.error("Lỗi lấy danh mục:", err);
-    }
-  };
+const fetchCategories = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/transaction_categories", {
+      headers: getAuthHeader(),
+    });
+    setCategories(res.data?.result?.data || []); // ✅ đảm bảo là mảng
+  } catch (err) {
+    console.error("Lỗi lấy danh mục:", err);
+  }
+};
 
   const handleAdd = async () => {
     try {
