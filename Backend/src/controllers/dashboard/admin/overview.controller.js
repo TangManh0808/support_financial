@@ -2,7 +2,8 @@ const overviewService = require("../../../services/dashboard/admin/overview.serv
 
 exports.getOverview = async (req, res) => {
   try {
-    const data = await overviewService.getOverview();
+    const year = parseInt(req.query.year);
+    const data = await overviewService.getOverview(year);
     res.json({ success: true, data });
   } catch (error) {
     console.error("❌ Lỗi khi lấy tổng quan admin:", error);

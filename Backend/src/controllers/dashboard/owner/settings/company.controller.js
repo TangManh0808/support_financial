@@ -4,10 +4,10 @@ const companyService = require("../../../../services/dashboard/settings/company.
 exports.getCompanyInfo = async (req, res) => {
   try {
     const company_id = req.user.company_id;
-    console.log("Thông tin user từ token:", req.user, token);
+    // console.log("Thông tin user từ token:", req.user, token);
 
     const company = await companyService.getById(company_id);
-    console.log(company_id);
+    // console.log(company_id);
     res.json(company);
   } catch (error) {
     console.error("Lỗi lấy thông tin công ty:", error);

@@ -28,12 +28,14 @@ import AdminUserPage from "~/pages/Dashboard/admin/AdminUserPage";
 import AdminCompaniesPage from "~/pages/Dashboard/admin/AdminCompaniesPage";
 import AdminCategoriesPage from "~/pages/Dashboard/admin/AdminCategoriesPage";
 import AdminActivityLogsPage from "~/pages/Dashboard/admin/AdminActivityLogsPage";
-
+// Home
+import Home from "./pages/Home/Home";
 function App() {
   return (
     <GlobalStyles>
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />

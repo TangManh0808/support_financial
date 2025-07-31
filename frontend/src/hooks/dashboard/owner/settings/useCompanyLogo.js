@@ -10,8 +10,13 @@ const useCompanyLogo = () => {
 
   const fetchLogo = async () => {
     try {
+      const token = localStorage.getItem("token");
       setLoading(true);
-      const res = await axios.get("/dashboard/owner/files/logo");
+      const res = await axios.get("/dashboard/owner/settings/files/logo", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (res.data.file_url) {
         setLogoUrl(BASE_API_URL + res.data.file_url); // Gắn domain đầy đủ

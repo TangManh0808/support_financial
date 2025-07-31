@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export const useAdminOverview = () => {
+export const useAdminOverview = (selectedYear) => {
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -9,11 +9,14 @@ export const useAdminOverview = () => {
       try {
         const token = localStorage.getItem("adminToken"); // ✅ Lấy token từ localStorage
 
-        const res = await axios.get("http://localhost:3000/admin/overview", {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ Gắn vào Authorization header
-          },
-        });
+        const res = await axios.get(
+          `http://localhost:3000/admin/overview?year=${selectedYear}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Gắn vào Authorization header
+            },
+          }
+        );
         // console.log(res.data);
 
         setOverview(res.data.data);
@@ -26,7 +29,7 @@ export const useAdminOverview = () => {
     };
 
     fetchOverview();
-  }, []);
+  }, [selectedYear]);
 
   return { overview, loading };
 };
